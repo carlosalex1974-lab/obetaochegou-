@@ -1,0 +1,10 @@
+import urllib.request
+import json
+try:
+    req = urllib.request.Request("http://127.0.0.1:8000/api/v1/matches/sync", method="POST")
+    with urllib.request.urlopen(req) as response:
+        print("Status:", response.status)
+        data = json.loads(response.read().decode())
+        print("Sync response:", data)
+except Exception as e:
+    print("Erro ao sincronizar API:", e)

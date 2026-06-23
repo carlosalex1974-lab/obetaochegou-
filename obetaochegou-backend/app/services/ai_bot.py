@@ -107,11 +107,29 @@ def _fallback_heuristic(home_team, away_team, home_win_prob, draw_prob, away_win
     
     return f"{p1}\n\n{p2}"
 
-def validate_predictions(original_rationale: str, match_stats: dict) -> dict:
-    """Usa o Llama 3 (via Groq) para ler o palpite dado e o resultado do jogo, e dar o selo de Green/Red."""
-    if not client:
-        return {"status": "error", "message": "Groq client not initialized"}
-        
+def validate_predictions(rationale: str, real_stats: dict) -> dict:
+    """
+    Usa o Llama 3 para auditar e dar notas (GREEN/RED) aos 5 palpites gerados anteriormente,
+    baseado nos resultados reais do jogo.
+    """
+    
+    # Reduzindo drasticamente o tamanho do payload para não estourar o limite da API (TPM 6000)
+    condensed_stats = {
+        "fixture": {"status": real_stats.get("fixture", {}).get("status")},
+        "goals": real_stats.get("goals"),
+        "score": real_stats.get("score"),
+        "statistics": []
+    }
+    
+    # Pegar apenas algumas estatísticas principais (como escanteios/chutes) das equipes para justificar greens
+    if "statistics" in real_stats and isinstance(real_stats["statistics"], list):
+        for team_stat in real_stats["statistics"]:
+            team_condensed = {"team": team_stat.get("team", {}).get("name"), "stats": {}}
+            for s in team_stat.get("statistics", []):
+                if s.get("type") in ["Corner Kicks", "Shots on Goal", "Total Shots"]:
+                    team_condensed["stats"][s.get("type")] = s.get("value")
+            condensed_stats["statistics"].append(team_condensed)
+
     prompt = f"""
 Você é um auditor implacável de apostas esportivas.
 Abaixo está o texto de "5 Palpites de Apostas" que o OBetão gerou ANTES do jogo começar.
@@ -120,10 +138,10 @@ E também estão as Estatísticas Finais reais de como o jogo terminou.
 Sua tarefa é avaliar CADA UM dos 5 palpites (e apenas os 5 palpites da Parte 2) e decidir de forma puramente matemática se foi GREEN (Acertou) ou RED (Errou).
 
 TEXTO ORIGINAL GERADO PELO OBETÃO ANTES DO JOGO:
-{original_rationale}
+{rationale}
 
-ESTATÍSTICAS FINAIS DO JOGO (API FOOTBALL):
-{match_stats}
+ESTATÍSTICAS FINAIS DO JOGO (RESUMIDAS):
+{condensed_stats}
 
 RETORNE EXATAMENTE UM JSON, E NADA MAIS. O JSON DEVE TER O SEGUINTE FORMATO:
 {{

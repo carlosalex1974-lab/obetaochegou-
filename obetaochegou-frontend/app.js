@@ -154,13 +154,13 @@ function formatMarkdown(text) {
     if (!text) return "";
     let html = text
         .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') // escape HTML
-        .replace(/\n\n/g, '</p><p>') // paragraphs
-        .replace(/\*\*(.*?)\*\*/g, '<strong style="color: var(--primary-neon);">$1</strong>') // bold
-        .replace(/\*(.*?)\*/g, '<em>$1</em>') // italic
-        .replace(/Força:\s*(Alta|Média|Media|Baixa)/gi, (match, force) => {
+        .replace(/Força(?:[^a-zA-ZáéíóúÁÉÍÓÚ]+)(Alta|Média|Media|Baixa)/gi, (match, force) => {
             const f = force.toLowerCase().replace('é', 'e');
             return `Força: <span class="badge strength-${f}">${force}</span>`;
         })
+        .replace(/\*\*(.*?)\*\*/g, '<strong style="color: var(--primary-neon);">$1</strong>') // bold
+        .replace(/\*(.*?)\*/g, '<em>$1</em>') // italic
+        .replace(/\n\n/g, '</p><p>') // paragraphs
         .replace(/PARTE 1:/g, '<strong style="color: white; font-size: 1.1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.2rem; display: block; margin-top: 1rem;">📝 Resumo Analítico</strong>')
         .replace(/PARTE 2:/g, '<strong style="color: white; font-size: 1.1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.2rem; display: block; margin-top: 1.5rem; margin-bottom: 0.5rem;">🎯 5 Palpites de Apostas</strong>')
         .replace(/\n- (.*?)(?=\n|$)/g, '<li style="margin-bottom: 0.3rem; margin-left: 1rem; color: #cbd5e1;">$1</li>') // simple lists

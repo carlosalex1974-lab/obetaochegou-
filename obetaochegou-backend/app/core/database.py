@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 # Mas na nuvem, podemos usar sqlite
 DATABASE_URL = os.getenv(
     "DATABASE_URL", 
-    "postgresql://betao:betaopassword@localhost:5432/obetaochegou"
+    "postgresql://obetaochegou_db_user:xRJ0tgDtGOnMetjNWCFY4lLROgzHKVwx@dpg-d8t9mgkm0tmc73c40s1g-a/obetaochegou_db"
 )
 
 # Se for SQLite, precisa de parâmetros especiais

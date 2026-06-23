@@ -82,7 +82,7 @@ def get_match_predictions(db: Session = Depends(get_db)):
     class MatchMock:
         pass
         
-    db_matches = db.query(Match).filter(Match.date >= datetime.now().date()).all()
+    db_matches = db.query(Match).order_by(Match.date.desc()).limit(20).all()
     
     match_objects = []
     for m in db_matches:

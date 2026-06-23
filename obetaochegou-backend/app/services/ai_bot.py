@@ -68,7 +68,7 @@ IMPORTANTE: Pelo menos UM dos 5 palpites DEVE ser no mercado de Cantos (Escantei
 
 Para CADA palpite, forneça:
 - O Palpite (O que apostar)
-- Força (OBRIGATÓRIO: Apenas "Alta" ou "Média". Você está ESTRITAMENTE PROIBIDO de criar palpites de força "Baixa")
+- Força (OBRIGATÓRIO: Apenas "Alta". Você está ESTRITAMENTE PROIBIDO de criar palpites de força "Média" ou "Baixa". Todos os seus 5 palpites DEVEM ser "Alta")
 - Probabilidade Estimada (%)
 
 Formate a Parte 2 como uma lista clara e legível. Entregue informações precisas e consistentes. Não invente dados absurdos, deduza as probabilidades de forma lógica com base nas estatísticas fornecidas. Apenas texto direto ao ponto.
@@ -82,9 +82,9 @@ Formate a Parte 2 como uma lista clara e legível. Entregue informações precis
         )
         content = completion.choices[0].message.content.strip()
         
-        # Filtro absoluto para impedir a força "Baixa" se a IA desobedecer
+        # Filtro absoluto para impedir as forças "Média" e "Baixa" se a IA desobedecer
         import re
-        content = re.sub(r'([Ff]or[çc]a(?:\*\*|:|\*\*:\s*|:\*\*\s*|\s*:\s*)*)Baixa', r'\1Média', content)
+        content = re.sub(r'([Ff]or[çc]a(?:\*\*|:|\*\*:\s*|:\*\*\s*|\s*:\s*)*)(?:M[ée]dia|Baixa)', r'\1Alta', content)
         
         return content
     except Exception as e:

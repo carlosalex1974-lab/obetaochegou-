@@ -158,3 +158,9 @@ def revalidate_error_matches(db: Session = Depends(get_db)):
                 db.commit()
                 
     return {"message": f"{revalidated_count} partidas revalidadas com sucesso.", "errors": errors}
+
+@router.post("/wipe")
+def wipe_db(db: Session = Depends(get_db)):
+    db.query(Match).delete()
+    db.commit()
+    return {"message": "Tabela apagada!"}

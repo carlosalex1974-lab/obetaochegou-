@@ -145,7 +145,7 @@ def revalidate_error_matches(db: Session = Depends(get_db)):
     errors = []
     
     for match in db_matches:
-        if match.validation_results and match.validation_results.get("status") == "error":
+        if match.validation_results:
             rationale = match.predictions_data.get("obetao_rationale", "") if match.predictions_data else ""
             stats = match.match_stats
             if rationale and stats:

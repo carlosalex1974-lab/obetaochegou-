@@ -68,19 +68,25 @@ IMPORTANTE: Pelo menos UM dos 5 palpites DEVE ser no mercado de Cantos (Escantei
 
 Para CADA palpite, forneça:
 - O Palpite (O que apostar)
-- Força (Apenas Alta ou Média. NUNCA envie palpites de força Baixa!)
+- Força (OBRIGATÓRIO: Apenas "Alta" ou "Média". Você está ESTRITAMENTE PROIBIDO de criar palpites de força "Baixa")
 - Probabilidade Estimada (%)
 
 Formate a Parte 2 como uma lista clara e legível. Entregue informações precisas e consistentes. Não invente dados absurdos, deduza as probabilidades de forma lógica com base nas estatísticas fornecidas. Apenas texto direto ao ponto.
 """
         
         completion = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
+            model="llama-3.3-70b-versatile",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7,
-            max_tokens=500,
+            max_tokens=600,
         )
-        return completion.choices[0].message.content.strip()
+        content = completion.choices[0].message.content.strip()
+        
+        # Filtro absoluto para impedir a força "Baixa" se a IA desobedecer
+        import re
+        content = re.sub(r'([Ff]or[çc]a(?:\*\*|:|\*\*:\s*|:\*\*\s*|\s*:\s*)*)Baixa', r'\1Média', content)
+        
+        return content
     except Exception as e:
         print(f"Erro ao gerar análise com Groq: {e}. Usando Heurística Local.")
         return _fallback_heuristic(home_team, away_team, home_win_prob, draw_prob, away_win_prob, recommended_bet)

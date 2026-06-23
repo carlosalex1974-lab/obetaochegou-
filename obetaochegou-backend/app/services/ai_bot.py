@@ -148,6 +148,6 @@ RETORNE EXATAMENTE UM JSON, E NADA MAIS. O JSON DEVE TER O SEGUINTE FORMATO:
         import json
         return json.loads(completion.choices[0].message.content.strip())
     except Exception as e:
-        print(f"Erro ao validar predições com Groq: {e}")
-        return {"status": "error"}
+        print(f"Erro ao validar predições com Groq: {str(e)}")
+        return {"status": "error", "message": str(e)}
 

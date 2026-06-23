@@ -136,3 +136,25 @@ def validate_finished_matches(db: Session = Depends(get_db)):
             db.commit() # salva cada jogo validado
             
     return {"message": f"{validated_count} partidas validadas e auditadas com sucesso!"}
+
+@router.post("/revalidate")
+def revalidate_error_matches(db: Session = Depends(get_db)):
+    """Busca jogos que terminaram mas a validação deu erro e tenta novamente"""
+    db_matches = db.query(Match).filter(Match.is_finished == True).all()
+    revalidated_count = 0
+    errors = []
+    
+    for match in db_matches:
+        if match.validation_results and match.validation_results.get("status") == "error":
+            rationale = match.predictions_data.get("obetao_rationale", "") if match.predictions_data else ""
+            stats = match.match_stats
+            if rationale and stats:
+                validation_json = validate_predictions(rationale, stats)
+                match.validation_results = validation_json
+                if validation_json.get("status") != "error":
+                    revalidated_count += 1
+                else:
+                    errors.append(validation_json.get("message"))
+                db.commit()
+                
+    return {"message": f"{revalidated_count} partidas revalidadas com sucesso.", "errors": errors}

@@ -64,14 +64,16 @@ Seja extremamente direto, claro e analítico. Evite rodeios. Justifique a expect
 
 PARTE 2: 5 Palpites de Apostas
 Forneça EXATAMENTE 5 palpites de apostas para o jogo.
-IMPORTANTE: Pelo menos UM dos 5 palpites DEVE ser no mercado de Cantos (Escanteios). Como os dados exatos de cantos não estão listados, faça uma dedução lógica baseada no poder de ataque (ex: times mais favoritos ou jogos mais pegados costumam ter +8.5 ou +9.5 cantos).
+IMPORTANTE: Pelo menos UM dos 5 palpites DEVE ser no mercado de Cantos (Escanteios). 
 
-Para CADA palpite, forneça:
-- O Palpite (O que apostar)
-- Força (OBRIGATÓRIO: Apenas "Alta". Você está ESTRITAMENTE PROIBIDO de criar palpites de força "Média" ou "Baixa". Todos os seus 5 palpites DEVEM ser "Alta")
-- Probabilidade Estimada (%)
+REGRAS DE OURO PARA OS PALPITES:
+1. Você SÓ PODE criar palpites que tenham uma Probabilidade Estimada maior que 70% (>70%).
+2. Se a aposta original tiver menos de 70%, procure um mercado mais seguro (ex: Mais de 0.5 Gols, Dupla Chance, Handicap, etc) até encontrar algo acima de 70%.
+3. O Palpite (O que apostar)
+4. Força (OBRIGATÓRIO: Apenas "Alta". Todos os seus 5 palpites DEVEM ser "Alta" porque todos estarão acima de 70%)
+5. Probabilidade Estimada (%)
 
-Formate a Parte 2 como uma lista clara e legível. Entregue informações precisas e consistentes. Não invente dados absurdos, deduza as probabilidades de forma lógica com base nas estatísticas fornecidas. Apenas texto direto ao ponto.
+Formate a Parte 2 como uma lista clara e legível. Entregue informações precisas e consistentes. Apenas texto direto ao ponto.
 """
         
         completion = client.chat.completions.create(

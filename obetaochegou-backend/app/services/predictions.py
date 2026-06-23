@@ -50,6 +50,12 @@ def generate_predictions(matches: list) -> list:
                 "recommended_bet": recommended_bet,
                 "over_2_5_goals": over_2_5,
                 "rationale": rationale
+            },
+            "validation": {
+                "is_finished": getattr(match, "is_finished", False),
+                "home_goals": getattr(match, "home_goals", None),
+                "away_goals": getattr(match, "away_goals", None),
+                "results": getattr(match, "validation_results", None)
             }
         }
         predicted_matches.append(match_data)

@@ -4,8 +4,9 @@ from datetime import datetime
 
 from app.core.database import get_db
 from app.models.match import Match
-from app.services.api_football import get_todays_matches, get_fixture_predictions
+from app.services.api_football import get_todays_matches, get_fixture_predictions, get_fixture_statistics
 from app.services.predictions import generate_predictions
+from app.services.ai_bot import validate_predictions
 
 router = APIRouter(prefix="/matches", tags=["Matches"])
 
@@ -93,7 +94,45 @@ def get_match_predictions(db: Session = Depends(get_db)):
         mock.match_time = m.date
         mock.status = m.status
         mock.predictions_data = m.predictions_data
+        
+        # Novos campos para validação
+        mock.is_finished = m.is_finished
+        mock.home_goals = m.home_goals
+        mock.away_goals = m.away_goals
+        mock.validation_results = m.validation_results
+        
         match_objects.append(mock)
         
     predictions = generate_predictions(match_objects)
     return {"predictions": predictions}
+
+@router.post("/validate")
+def validate_finished_matches(db: Session = Depends(get_db)):
+    """Busca os resultados dos jogos terminados e valida os palpites com a IA"""
+    db_matches = db.query(Match).filter(Match.is_finished == False).all()
+    validated_count = 0
+    
+    for match in db_matches:
+        # Puxa o status atualizado do jogo na API
+        stats = get_fixture_statistics(match.api_fixture_id)
+        if not stats:
+            continue
+            
+        status = stats.get("fixture", {}).get("status", {}).get("short")
+        if status in ["FT", "AET", "PEN"]:
+            # Jogo acabou!
+            match.is_finished = True
+            match.home_goals = stats.get("goals", {}).get("home")
+            match.away_goals = stats.get("goals", {}).get("away")
+            match.match_stats = stats
+            
+            # Hora de usar a IA para validar os palpites!
+            rationale = match.predictions_data.get("obetao_rationale", "") if match.predictions_data else ""
+            if rationale:
+                validation_json = validate_predictions(rationale, stats)
+                match.validation_results = validation_json
+                
+            validated_count += 1
+            db.commit() # salva cada jogo validado
+            
+    return {"message": f"{validated_count} partidas validadas e auditadas com sucesso!"}

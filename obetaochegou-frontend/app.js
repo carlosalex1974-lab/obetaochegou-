@@ -49,6 +49,15 @@ document.addEventListener("DOMContentLoaded", () => {
             const pDraw = getPercentageNum(p.predictions.draw_prob);
             const pAway = getPercentageNum(p.predictions.away_win_prob);
 
+            let vsContent = `<span class="vs">VS</span>`;
+            if (p.validation && p.validation.is_finished) {
+                vsContent = `<div class="final-score">
+                    <span class="score">${p.validation.home_goals !== null ? p.validation.home_goals : '-'}</span>
+                    <span class="vs-text">FT</span>
+                    <span class="score">${p.validation.away_goals !== null ? p.validation.away_goals : '-'}</span>
+                </div>`;
+            }
+
             const card = document.createElement("div");
             card.className = "match-card";
             card.style.animationDelay = `${index * 0.1}s`; // Staggered animation
@@ -58,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
                 <div class="match-teams">
                     <span class="home">${p.home_team}</span>
-                    <span class="vs">VS</span>
+                    ${vsContent}
                     <span class="away">${p.away_team}</span>
                 </div>
                 <div class="prediction-stats">
@@ -167,7 +176,35 @@ window.openAnalysisModal = function(event, id) {
     if (!prediction) return;
     
     document.getElementById("modal-title").textContent = `Análise: ${prediction.home_team} vs ${prediction.away_team}`;
-    document.getElementById("modal-text").innerHTML = formatMarkdown(prediction.predictions.rationale);
+    
+    let htmlText = formatMarkdown(prediction.predictions.rationale);
+    
+    // Injetar Resultados da Validação (Auditoria) se o jogo acabou
+    if (prediction.validation && prediction.validation.is_finished && prediction.validation.results && prediction.validation.results.results) {
+        const valResults = prediction.validation.results.results;
+        
+        let validationHtml = `<div class="validation-box">
+            <h4 style="color: white; margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;">🔥 Auditoria OBetão Pós-Jogo</h4>
+            <ul style="list-style: none; padding: 0; margin: 0;">`;
+        
+        valResults.forEach(r => {
+            const badge = r.resultado.toUpperCase() === "GREEN" 
+                ? `<span class="badge badge-green">✅ GREEN</span>` 
+                : `<span class="badge badge-red">❌ RED</span>`;
+            validationHtml += `<li style="margin-bottom: 10px; font-size: 0.9rem; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; gap: 10px;">
+                    <strong style="color: #cbd5e1; flex: 1;">${r.palpite}</strong>
+                    ${badge}
+                </div>
+                <div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">${r.explicacao}</div>
+            </li>`;
+        });
+        validationHtml += `</ul></div>`;
+        
+        htmlText += validationHtml;
+    }
+    
+    document.getElementById("modal-text").innerHTML = htmlText;
     document.getElementById("analysis-modal").style.display = "flex";
 }
 

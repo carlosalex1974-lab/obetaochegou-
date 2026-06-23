@@ -62,3 +62,36 @@ def get_fixture_predictions(fixture_id: int):
     except requests.exceptions.RequestException as e:
         print(f"Erro ao buscar predições da fixture {fixture_id}: {e}")
         return None
+
+def get_fixture_statistics(fixture_id: int):
+    """Busca o resultado final e as estatísticas da partida (gols, escanteios, etc)"""
+    if not API_KEY:
+        return None
+        
+    url = f"{BASE_URL}/fixtures"
+    querystring = {"id": str(fixture_id)}
+    
+    try:
+        response = requests.get(url, headers=HEADERS, params=querystring)
+        response.raise_for_status()
+        data = response.json()
+        if "response" in data and len(data["response"]) > 0:
+            fixture_data = data["response"][0]
+            
+            # Buscar estatísticas da partida (para ter os cantos/escanteios)
+            stats_url = f"{BASE_URL}/fixtures/statistics"
+            stats_querystring = {"fixture": str(fixture_id)}
+            try:
+                stats_resp = requests.get(stats_url, headers=HEADERS, params=stats_querystring)
+                stats_resp.raise_for_status()
+                stats_data = stats_resp.json()
+                if "response" in stats_data:
+                    fixture_data["detailed_statistics"] = stats_data["response"]
+            except Exception as e:
+                print(f"Erro ao buscar estatísticas detalhadas: {e}")
+                
+            return fixture_data
+        return None
+    except requests.exceptions.RequestException as e:
+        print(f"Erro ao buscar resultado da fixture {fixture_id}: {e}")
+        return None

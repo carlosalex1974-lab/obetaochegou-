@@ -106,3 +106,48 @@ def _fallback_heuristic(home_team, away_team, home_win_prob, draw_prob, away_win
     p2 = f"Minha recomendação cravada baseada nos algoritmos é: {recommended_bet}. Pode ir sem medo que a estatística está do nosso lado pra buscar esse green!"
     
     return f"{p1}\n\n{p2}"
+
+def validate_predictions(original_rationale: str, match_stats: dict) -> dict:
+    """Usa o Llama 3 (via Groq) para ler o palpite dado e o resultado do jogo, e dar o selo de Green/Red."""
+    if not client:
+        return {"status": "error", "message": "Groq client not initialized"}
+        
+    prompt = f"""
+Você é um auditor implacável de apostas esportivas.
+Abaixo está o texto de "5 Palpites de Apostas" que o OBetão gerou ANTES do jogo começar.
+E também estão as Estatísticas Finais reais de como o jogo terminou.
+
+Sua tarefa é avaliar CADA UM dos 5 palpites (e apenas os 5 palpites da Parte 2) e decidir de forma puramente matemática se foi GREEN (Acertou) ou RED (Errou).
+
+TEXTO ORIGINAL GERADO PELO OBETÃO ANTES DO JOGO:
+{original_rationale}
+
+ESTATÍSTICAS FINAIS DO JOGO (API FOOTBALL):
+{match_stats}
+
+RETORNE EXATAMENTE UM JSON, E NADA MAIS. O JSON DEVE TER O SEGUINTE FORMATO:
+{{
+    "results": [
+        {{
+            "palpite": "texto do palpite 1",
+            "resultado": "GREEN" ou "RED",
+            "explicacao": "ex: Placar final foi 2x1 (3 gols), portanto bateu."
+        }},
+        ... os outros 4 palpites ...
+    ]
+}}
+"""
+    try:
+        completion = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.0,
+            response_format={"type": "json_object"},
+            max_tokens=800,
+        )
+        import json
+        return json.loads(completion.choices[0].message.content.strip())
+    except Exception as e:
+        print(f"Erro ao validar predições com Groq: {e}")
+        return {"status": "error"}
+

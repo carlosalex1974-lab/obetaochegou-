@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, JSON
+from sqlalchemy import Column, Integer, String, DateTime, JSON, Boolean
 from app.core.database import Base
 
 class Match(Base):
@@ -9,15 +9,15 @@ class Match(Base):
     date = Column(DateTime, nullable=False)
     status = Column(String, index=True)
     
-    # Podemos salvar o JSON completo da resposta por conveniência ou normalizar os campos.
-    # Por enquanto, campos importantes ficam normalizados.
     home_team = Column(String, nullable=False)
     away_team = Column(String, nullable=False)
     home_goals = Column(Integer, nullable=True)
     away_goals = Column(Integer, nullable=True)
     
-    # Dados brutos da API caso precise de algo que não foi normalizado
     raw_data = Column(JSON, nullable=True)
-    
-    # Estatísticas de predição (percentuais, h2h, form) recebidas da API
     predictions_data = Column(JSON, nullable=True)
+    
+    is_finished = Column(Boolean, default=False)
+    match_stats = Column(JSON, nullable=True)
+    validation_results = Column(JSON, nullable=True)
+

@@ -131,11 +131,18 @@ def validate_predictions(rationale: str, real_stats: dict) -> dict:
             condensed_stats["statistics"].append(team_condensed)
 
     prompt = f"""
-Você é um auditor implacável de apostas esportivas.
+Você é um auditor implacável de apostas esportivas e um matemático brilhante.
 Abaixo está o texto de "5 Palpites de Apostas" que o OBetão gerou ANTES do jogo começar.
 E também estão as Estatísticas Finais reais de como o jogo terminou.
 
 Sua tarefa é avaliar CADA UM dos 5 palpites (e apenas os 5 palpites da Parte 2) e decidir de forma puramente matemática se foi GREEN (Acertou) ou RED (Errou).
+
+REGRAS DE MATEMÁTICA E LÓGICA (LEIA ATENTAMENTE):
+1. 'Mais de 0.5 gols' ou '1+ gols' significa que se o placar teve 1 ou mais gols (ex: 1x0, 1x2), a aposta é GREEN.
+2. 'Mais de 2.5 gols' significa que a soma dos gols das duas equipes tem que ser 3 ou mais.
+3. 'Mais de 8.5 cantos' significa que a soma de cantos tem que ser 9 ou mais. 9 é maior que 8.5, portanto GREEN.
+4. Preste muita atenção em qual time é o de 'Casa' (Home) e qual é o 'Fora' (Away).
+5. Justifique a conta matemática na 'explicacao'. Exemplo: 'O time fez 1 gol, 1 é maior que 0.5, portanto bateu.'
 
 TEXTO ORIGINAL GERADO PELO OBETÃO ANTES DO JOGO:
 {rationale}
@@ -157,7 +164,7 @@ RETORNE EXATAMENTE UM JSON, E NADA MAIS. O JSON DEVE TER O SEGUINTE FORMATO:
 """
     try:
         completion = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
+            model="llama-3.3-70b-versatile",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.0,
             response_format={"type": "json_object"},

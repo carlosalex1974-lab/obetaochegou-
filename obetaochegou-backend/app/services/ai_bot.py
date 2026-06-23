@@ -68,7 +68,7 @@ IMPORTANTE: Pelo menos UM dos 5 palpites DEVE ser no mercado de Cantos (Escantei
 
 Para CADA palpite, forneça:
 - O Palpite (O que apostar)
-- Força (Alta, Média ou Baixa)
+- Força (Apenas Alta ou Média. NUNCA envie palpites de força Baixa!)
 - Probabilidade Estimada (%)
 
 Formate a Parte 2 como uma lista clara e legível. Entregue informações precisas e consistentes. Não invente dados absurdos, deduza as probabilidades de forma lógica com base nas estatísticas fornecidas. Apenas texto direto ao ponto.

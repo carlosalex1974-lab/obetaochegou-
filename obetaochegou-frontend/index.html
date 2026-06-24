@@ -8,13 +8,48 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .logo span {
+            color: var(--primary-neon);
+        }
+        
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+        
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: color 0.3s;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-links a:hover {
+            color: white;
+        }
+
+        .nav-links a.active {
+            color: var(--primary-neon);
+            border-bottom-color: var(--primary-neon);
+        }
+    </style>
 </head>
 <body>
     <header>
         <div class="logo">
-            <h1>OBetão<span>Chegou</span></h1>
+            <h1>OBetão<span>Chegou!</span></h1>
+            <p class="subtitle">Análises Esportivas com Inteligência Artificial</p>
         </div>
-        <p class="subtitle">A inteligência por trás dos greens diários.</p>
+        <div class="nav-links">
+            <a href="index.html" class="active">Jogos de Hoje</a>
+            <a href="history.html">Estatísticas & Histórico</a>
+        </div>
     </header>
 
     <main class="dashboard">

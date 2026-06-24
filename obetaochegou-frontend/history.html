@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBetão Chegou! - Histórico e Estatísticas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .stat-card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            backdrop-filter: blur(12px);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            animation: fadeUp 0.5s ease backwards;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-title {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-card.green .stat-value {
+            color: var(--primary-neon);
+            text-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .stat-card.red .stat-value {
+            color: #ef4444;
+            text-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+        }
+        
+        .stat-card.winrate .stat-value {
+            color: var(--accent-purple);
+            text-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .history-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: transform 0.2s;
+            animation: fadeUp 0.5s ease backwards;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-glass);
+            padding-bottom: 1rem;
+        }
+
+        .match-date {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .match-score {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: white;
+            background: rgba(0,0,0,0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            letter-spacing: 2px;
+        }
+
+        .predictions-grid-history {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .prediction-item {
+            background: rgba(0,0,0,0.2);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--border-glass);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .prediction-item.green {
+            border-left-color: var(--primary-neon);
+        }
+
+        .prediction-item.red {
+            border-left-color: #ef4444;
+        }
+
+        .pred-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: white;
+        }
+
+        .pred-rationale {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+        
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: color 0.3s;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-links a:hover {
+            color: white;
+        }
+
+        .nav-links a.active {
+            color: var(--primary-neon);
+            border-bottom-color: var(--primary-neon);
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>OBetão<span>Chegou!</span></h1>
+            <p class="subtitle">Análises Esportivas com Inteligência Artificial</p>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Jogos de Hoje</a>
+            <a href="history.html" class="active">Estatísticas & Histórico</a>
+        </div>
+    </header>
+
+    <main class="dashboard">
+        <div class="controls-bar" style="justify-content: center;">
+            <div class="status-indicator">
+                <div class="dot" id="history-dot"></div>
+                <span id="history-status-text">Carregando Estatísticas...</span>
+            </div>
+        </div>
+
+        <div class="stats-container" id="stats-container">
+            <!-- Rendered by JS -->
+        </div>
+
+        <h2 style="margin-bottom: 1.5rem; color: white;">Últimas Partidas Auditadas</h2>
+        
+        <div class="history-list" id="history-list">
+            <!-- Rendered by JS -->
+        </div>
+    </main>
+
+    <script src="history.js"></script>
+</body>
+</html>

@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 # Usa estritamente o Postgres do Render
-DATABASE_URL = "postgresql://obetaochegou_db_user:xRJ0tgDtGOnMetjNWCFY4lLROgzHKVwx@dpg-d8t9mgkm0tmc73c40s1g-a/obetaochegou_db"
+DATABASE_URL = "postgresql+psycopg://obetaochegou_db_user:xRJ0tgDtGOnMetjNWCFY4lLROgzHKVwx@dpg-d8t9mgkm0tmc73c40s1g-a/obetaochegou_db"
 
 # Se for SQLite, precisa de parâmetros especiais (não será, mas mantemos por segurança caso mude)
 connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}

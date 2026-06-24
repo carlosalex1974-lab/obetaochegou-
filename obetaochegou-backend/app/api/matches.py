@@ -106,6 +106,53 @@ def get_match_predictions(db: Session = Depends(get_db)):
     predictions = generate_predictions(match_objects)
     return {"predictions": predictions}
 
+@router.get("/history")
+def get_match_history(db: Session = Depends(get_db)):
+    """Retorna o histórico agregado de greens e reds e a lista de jogos auditados."""
+    db_matches = db.query(Match).filter(Match.is_finished == True, Match.validation_results != None).order_by(Match.date.desc()).all()
+    
+    total_greens = 0
+    total_reds = 0
+    history_list = []
+    
+    for m in db_matches:
+        results = m.validation_results.get("results", []) if m.validation_results else []
+        match_greens = 0
+        match_reds = 0
+        
+        for r in results:
+            if r.get("resultado", "").upper() == "GREEN":
+                total_greens += 1
+                match_greens += 1
+            elif r.get("resultado", "").upper() == "RED":
+                total_reds += 1
+                match_reds += 1
+                
+        history_list.append({
+            "id": m.id,
+            "home_team": m.home_team,
+            "away_team": m.away_team,
+            "date": m.date,
+            "home_goals": m.home_goals,
+            "away_goals": m.away_goals,
+            "match_greens": match_greens,
+            "match_reds": match_reds,
+            "predictions": results
+        })
+        
+    total_predictions = total_greens + total_reds
+    win_rate = (total_greens / total_predictions * 100) if total_predictions > 0 else 0
+    
+    return {
+        "stats": {
+            "total_predictions": total_predictions,
+            "total_greens": total_greens,
+            "total_reds": total_reds,
+            "win_rate": round(win_rate, 2)
+        },
+        "history": history_list
+    }
+
 @router.post("/validate")
 def validate_finished_matches(db: Session = Depends(get_db)):
     """Busca os resultados dos jogos terminados e valida os palpites com a IA"""
